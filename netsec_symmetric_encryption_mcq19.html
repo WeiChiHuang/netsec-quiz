@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NetSec Symmetric Encryption – 19 MCQs</title>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#121933; --panel2:#182142; --text:#eef2ff; --muted:#a9b3d1;
+      --accent:#7aa2ff; --good:#1db954; --bad:#ff5d73; --warn:#ffc857; --line:#2a3566;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#0b1020,#0f1730 35%,#0b1020);color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:24px}
+    h1{font-size:28px;margin:0 0 8px}
+    .sub{color:var(--muted);margin-bottom:18px}
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+    button{background:var(--accent);border:none;color:#081022;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+    button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+    .score{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:18px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+    .metric{background:rgba(255,255,255,0.02);border-radius:12px;padding:10px 12px}
+    .metric .k{font-size:12px;color:var(--muted);margin-bottom:4px}
+    .metric .v{font-size:22px;font-weight:800}
+    .qcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 6px 24px rgba(0,0,0,.16)}
+    .qtop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px}
+    .badge{font-size:12px;color:#081022;background:var(--warn);padding:5px 8px;border-radius:999px;font-weight:800;white-space:nowrap}
+    .qtitle{font-size:18px;font-weight:800;margin:0 0 8px}
+    .stem{color:var(--text);line-height:1.55;margin-bottom:14px}
+    .opts{display:grid;gap:10px}
+    label.opt{display:block;background:var(--panel2);border:1px solid var(--line);padding:12px 14px;border-radius:12px;cursor:pointer;transition:.15s}
+    label.opt:hover{transform:translateY(-1px);border-color:#4f66ba}
+    label.opt.correct{border-color:var(--good);background:rgba(29,185,84,.12)}
+    label.opt.wrong{border-color:var(--bad);background:rgba(255,93,115,.10)}
+    input[type=radio]{margin-right:10px;transform:translateY(1px)}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .result{margin-top:12px;padding:12px 14px;border-radius:12px;display:none;line-height:1.55}
+    .result.good{display:block;background:rgba(29,185,84,.12);border:1px solid rgba(29,185,84,.45)}
+    .result.bad{display:block;background:rgba(255,93,115,.10);border:1px solid rgba(255,93,115,.42)}
+    .answer{display:none;margin-top:12px;padding:12px 14px;border-radius:12px;background:#0d1430;border:1px solid var(--line);line-height:1.6}
+    .answer.show{display:block}
+    .small{font-size:13px;color:var(--muted)}
+    .footer{color:var(--muted);font-size:13px;margin-top:24px}
+    @media (max-width:700px){.score{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>NetSec – Symmetric Encryption Drill</h1>
+  <div class="sub">19 multiple-choice questions based on your Chapter 4 symmetric-encryption notes and short-answer set.</div>
+
+  <div class="toolbar">
+    <button onclick="checkAll()">Check all answered</button>
+    <button class="secondary" onclick="revealAll()">Reveal all answers</button>
+    <button class="secondary" onclick="resetQuiz()">Reset</button>
+    <button class="secondary" onclick="shuffleQuestions()">Shuffle questions</button>
+  </div>
+
+  <div class="score">
+    <div class="metric"><div class="k">Answered</div><div class="v" id="answered">0</div></div>
+    <div class="metric"><div class="k">Correct</div><div class="v" id="correct">0</div></div>
+    <div class="metric"><div class="k">Accuracy</div><div class="v" id="accuracy">0%</div></div>
+    <div class="metric"><div class="k">Remaining</div><div class="v" id="remaining">19</div></div>
+  </div>
+
+  <div id="quiz"></div>
+
+  <div class="footer">Tip: choose an option first, then click “Check”. “Reveal answer” shows the compact exam-style answer.</div>
+</div>
+
+<script>
+const questions = [
+  {
+    id:1,
+    topic:"Symmetric Encryption",
+    stem:"Which statement best defines symmetric encryption and its correctness requirement?",
+    options:[
+      "It uses one shared secret key for encryption and decryption, and correctness means Dec_k(Enc_k(m)) = m.",
+      "It uses one public key for encryption and one private key for decryption, and correctness means Enc_k(Dec_k(m)) = m.",
+      "It uses one shared key only for encryption, while decryption may use another derived key, and correctness means ciphertexts stay unique.",
+      "It uses two synchronized keys of equal length, and correctness means different plaintexts always yield different ciphertexts."
+    ],
+    correct:0,
+    answer:"Symmetric encryption uses one shared secret key for both encryption and decryption. The correctness requirement is Dec_k(Enc_k(m)) = m."
+  },
+  {
+    id:2,
+    topic:"Security Goals",
+    stem:"Why does encryption alone usually provide confidentiality, but not automatically integrity or authenticity?",
+    options:[
+      "Because encryption hides plaintext, but an attacker may still modify or forge ciphertexts without proving sender identity.",
+      "Because encryption guarantees authenticity only if the ciphertext is long enough.",
+      "Because encryption provides integrity, but not confidentiality, unless combined with padding.",
+      "Because encryption prevents replay, but only stream ciphers provide confidentiality."
+    ],
+    correct:0,
+    answer:"Encryption alone hides the plaintext and therefore gives confidentiality. It does not automatically give integrity or authenticity, because attackers may still modify ciphertexts or send forged ciphertexts."
+  },
+  {
+    id:3,
+    topic:"One-Time Pad",
+    stem:"Which pair of formulas correctly describes the One-Time Pad?",
+    options:[
+      "Enc(m)=m⊕otp and Dec(c)=c⊕otp.",
+      "Enc(m)=m+otp and Dec(c)=c-otp over integers.",
+      "Enc(m)=E_k(m) and Dec(c)=D_k(c) with any block cipher.",
+      "Enc(m)=otp⊕otp and Dec(c)=m⊕c."
+    ],
+    correct:0,
+    answer:"For the One-Time Pad, encryption is Enc_otp(m) = m ⊕ otp and decryption is Dec_otp(c) = c ⊕ otp. It is correct because (m ⊕ otp) ⊕ otp = m."
+  },
+  {
+    id:4,
+    topic:"OTP Requirements",
+    stem:"Which combination lists the three conditions required for OTP security?",
+    options:[
+      "The key must have the same length as the message, be used only once, and be perfectly random.",
+      "The key must be shorter than the message, be reused carefully, and be generated deterministically.",
+      "The key must be public, refreshed per block, and padded to fixed length.",
+      "The key must be stored in ciphertext form, used twice for verification, and be computationally random."
+    ],
+    correct:0,
+    answer:"OTP is secure only if the key has the same length as the message, is used only once, and is perfectly random."
+  },
+  {
+    id:5,
+    topic:"OTP Practice",
+    stem:"Why is OTP considered a perfect cipher, yet impractical in real systems?",
+    options:[
+      "It gives perfect confidentiality under strict assumptions, but key generation, key distribution, and one-time use are impractical at scale.",
+      "It is impractical because XOR is computationally too slow for modern CPUs.",
+      "It is perfect only for short messages, because long messages require padding and modes.",
+      "It is impractical because the same pad must be reused to stay synchronized."
+    ],
+    correct:0,
+    answer:"OTP is a perfect cipher because, under its assumptions, the ciphertext reveals no information about the plaintext. It is impractical because the key must be as long as the message, truly random, and never reused."
+  },
+  {
+    id:6,
+    topic:"Kerckhoffs’s Principle",
+    stem:"Which statement matches Kerckhoffs’s principle most closely?",
+    options:[
+      "A cipher should remain secure even if the algorithm is public; only the key must stay secret.",
+      "A cipher is secure only if both the algorithm and the key remain secret.",
+      "A cipher should publish the key but hide the implementation details.",
+      "A cipher should keep the mode public, but the block size secret."
+    ],
+    correct:0,
+    answer:"Kerckhoffs’s principle says that the algorithm may be public; only the key must remain secret. This matters because real systems should not rely on hiding the algorithm."
+  },
+  {
+    id:7,
+    topic:"Attack Models",
+    stem:"What is the difference between a ciphertext-only attack and a known-plaintext attack?",
+    options:[
+      "In a ciphertext-only attack, the attacker only knows ciphertexts; in a known-plaintext attack, the attacker also knows at least one matching plaintext-ciphertext pair.",
+      "In a ciphertext-only attack, the attacker can choose ciphertexts; in a known-plaintext attack, the attacker can choose plaintexts.",
+      "In a ciphertext-only attack, the attacker knows the key length; in a known-plaintext attack, the attacker knows the block size.",
+      "In a ciphertext-only attack, the attacker cannot observe traffic; in a known-plaintext attack, the attacker can observe traffic."
+    ],
+    correct:0,
+    answer:"In a ciphertext-only attack, the attacker only knows ciphertexts. In a known-plaintext attack, the attacker additionally knows at least one plaintext-ciphertext pair and uses it to infer more information."
+  },
+  {
+    id:8,
+    topic:"iCry",
+    stem:"Why is the toy cipher iCry insecure although it satisfies correctness?",
+    options:[
+      "Because correctness only means decryption works for the legitimate key, while iCry has a tiny key space and reused 4-bit key material, making brute force and known-plaintext attacks easy.",
+      "Because correctness already implies confidentiality, but iCry fails only because it lacks padding.",
+      "Because iCry uses XOR, and every XOR-based cipher is automatically insecure.",
+      "Because iCry does not decrypt at all when the plaintext length is four bits."
+    ],
+    correct:0,
+    answer:"Correctness only means that decryption recovers the plaintext for the legitimate key. iCry is still insecure because the key space is tiny and the same short key is reused, so attacks are easy."
+  },
+  {
+    id:9,
+    topic:"Block vs Stream Cipher",
+    stem:"Which answer correctly distinguishes a block cipher from a stream cipher?",
+    options:[
+      "A block cipher encrypts fixed-size blocks, while a stream cipher generates a keystream that is XORed with plaintext.",
+      "A block cipher always uses padding, while a stream cipher never uses keys.",
+      "A block cipher is randomized by definition, while a stream cipher is deterministic by definition.",
+      "A block cipher gives integrity, while a stream cipher gives only confidentiality."
+    ],
+    correct:0,
+    answer:"A block cipher encrypts fixed-size blocks into fixed-size ciphertext blocks, such as AES. A stream cipher generates a keystream and XORs it with the plaintext, such as ChaCha20 or OTP."
+  },
+  {
+    id:10,
+    topic:"Modes of Encryption",
+    stem:"Why do we need modes of encryption when using a block cipher for long messages?",
+    options:[
+      "Because a block cipher only handles one fixed-size block directly, so modes define how to process longer messages securely.",
+      "Because a block cipher cannot decrypt without a mode, even for a single block.",
+      "Because modes are required only to compress messages before encryption.",
+      "Because modes convert every block cipher automatically into an authenticated cipher."
+    ],
+    correct:0,
+    answer:"A block cipher operates on one fixed-size block. Modes define how to apply it to longer messages and how the blocks are connected."
+  },
+  {
+    id:11,
+    topic:"Padding",
+    stem:"What is padding, and when is it needed?",
+    options:[
+      "Padding adds extra data to fill the last plaintext block when the message length is not a multiple of the block size.",
+      "Padding hides the IV so that the first block remains secret.",
+      "Padding is the integrity tag appended after encryption.",
+      "Padding is required in every stream cipher to keep the keystream aligned."
+    ],
+    correct:0,
+    answer:"Padding means adding extra data so the last plaintext block reaches the required block size. It is needed for block-cipher modes such as ECB or CBC when the message length is not a multiple of the block size."
+  },
+  {
+    id:12,
+    topic:"ECB",
+    stem:"Why is ECB mode insecure for structured data?",
+    options:[
+      "Because identical plaintext blocks produce identical ciphertext blocks, so visible patterns remain.",
+      "Because ECB reuses the previous ciphertext block as IV, which leaks the first block.",
+      "Because ECB modifies the block length and therefore reveals padding length.",
+      "Because ECB prevents decryption if any one block is corrupted."
+    ],
+    correct:0,
+    answer:"ECB encrypts each block independently. Therefore identical plaintext blocks produce identical ciphertext blocks, so patterns in structured data stay visible."
+  },
+  {
+    id:13,
+    topic:"CBC",
+    stem:"How does CBC improve over ECB?",
+    options:[
+      "CBC XORs each plaintext block with the previous ciphertext block before encryption, so identical plaintext blocks usually produce different ciphertext blocks.",
+      "CBC decrypts before encrypting, so it removes all repetition from the message.",
+      "CBC uses a public key for the first block and a secret key for the remaining blocks.",
+      "CBC guarantees integrity because each block depends on the previous one."
+    ],
+    correct:0,
+    answer:"CBC improves over ECB by XORing each plaintext block with the previous ciphertext block before encryption. As a result, identical plaintext blocks usually encrypt to different ciphertext blocks."
+  },
+  {
+    id:14,
+    topic:"IV in CBC",
+    stem:"What is the purpose of the IV in CBC, and which property is required?",
+    options:[
+      "It initializes the chaining so equal messages do not start with equal ciphertexts; it may be public but must be fresh.",
+      "It stores the MAC tag for the first block; it must remain secret forever.",
+      "It replaces the secret key for the first block; it must equal the first plaintext block.",
+      "It compresses the message before encryption; it must be reused for synchronization."
+    ],
+    correct:0,
+    answer:"The IV initializes CBC and ensures that identical plaintexts do not encrypt to identical ciphertexts at the beginning. It may be public, but it must be fresh, and in practice it should also be integrity-protected."
+  },
+  {
+    id:15,
+    topic:"OFB",
+    stem:"Why can OFB be viewed as turning a block cipher into a stream cipher?",
+    options:[
+      "Because the block cipher is used only to generate a keystream, and the plaintext is XORed with that keystream.",
+      "Because OFB encrypts each plaintext block independently like ECB.",
+      "Because OFB uses the plaintext itself as the next counter block.",
+      "Because OFB derives a new public key for every block."
+    ],
+    correct:0,
+    answer:"In OFB, the block cipher generates a keystream from the IV and previous outputs. The plaintext is then XORed with that keystream, so the construction behaves like a stream cipher."
+  },
+  {
+    id:16,
+    topic:"CTR",
+    stem:"What does ctr_i = IV ∥ i mean in CTR mode?",
+    options:[
+      "The input block for the cipher is the concatenation of a fresh IV (or nonce) and the counter value i.",
+      "The plaintext block is concatenated with the ciphertext block before encryption.",
+      "The secret key is split into an IV part and a counter part for each block.",
+      "The IV is XORed with i after decryption to recover the plaintext."
+    ],
+    correct:0,
+    answer:"In CTR mode, ctr_i = IV ∥ i means the block-cipher input is the concatenation of a fresh IV or nonce and the counter value i. Each such counter block generates one keystream block."
+  },
+  {
+    id:17,
+    topic:"OFB / CTR transmission error",
+    stem:"Why does a transmission error in one ciphertext block usually affect only the corresponding plaintext block in OFB and CTR?",
+    options:[
+      "Because decryption of a block does not depend on previous ciphertext blocks; the keystream generation is independent of the corrupted ciphertext block.",
+      "Because OFB and CTR automatically correct corrupted ciphertext bytes with redundancy.",
+      "Because the IV is recomputed from the corrupted block during decryption.",
+      "Because those modes first verify integrity and then decrypt."
+    ],
+    correct:0,
+    answer:"In OFB and CTR, the keystream is generated independently of the ciphertext block being decrypted. Therefore, a transmission error usually affects only the corresponding plaintext block."
+  },
+  {
+    id:18,
+    topic:"CTR vs OFB",
+    stem:"Why does CTR make reordering, repeating, or deleting ciphertext blocks problematic?",
+    options:[
+      "Because each ciphertext block is tied to a specific counter value, so moving or repeating blocks combines them with the wrong keystream position.",
+      "Because CTR derives the key from the plaintext order and therefore stops working after one swap.",
+      "Because CTR requires padding that depends on the number of blocks already received.",
+      "Because CTR authenticates block order automatically and rejects any mismatch."
+    ],
+    correct:0,
+    answer:"In CTR, every block corresponds to a specific counter value. If blocks are reordered, repeated, or deleted, decryption uses the wrong keystream alignment and yields wrong plaintext."
+  },
+  {
+    id:19,
+    topic:"Integrity",
+    stem:"Do ECB, CBC, OFB, or CTR provide integrity by themselves?",
+    options:[
+      "No. They provide confidentiality only; integrity requires an additional mechanism such as a MAC or AEAD.",
+      "Only CBC provides integrity, because each block depends on the previous ciphertext block.",
+      "Only CTR and OFB provide integrity, because stream-like modes detect reordering automatically.",
+      "Yes. Any secure mode of encryption automatically implies integrity and authenticity."
+    ],
+    correct:0,
+    answer:"No. ECB, CBC, OFB, and CTR do not provide integrity by themselves. Integrity requires an additional mechanism such as a MAC or an AEAD scheme."
+  }
+];
+
+function render(list){
+  const quiz = document.getElementById('quiz');
+  quiz.innerHTML = '';
+  list.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.dataset.id = q.id;
+    card.innerHTML = `
+      <div class="qtop">
+        <div>
+          <div class="qtitle">Q${idx+1}. ${q.topic}</div>
+          <div class="stem">${q.stem}</div>
+        </div>
+        <div class="badge">${q.topic}</div>
+      </div>
+      <div class="opts">
+        ${q.options.map((opt,i)=>`
+          <label class="opt" data-opt="${i}">
+            <input type="radio" name="q_${q.id}" value="${i}" onchange="updateStats()" />
+            <strong>${String.fromCharCode(65+i)}.</strong> ${opt}
+          </label>
+        `).join('')}
+      </div>
+      <div class="actions">
+        <button onclick="checkOne(${q.id})">Check</button>
+        <button class="secondary" onclick="toggleAnswer(${q.id})">Reveal answer</button>
+      </div>
+      <div class="result" id="result_${q.id}"></div>
+      <div class="answer" id="answer_${q.id}"><strong>Exam-ready answer:</strong> ${q.answer}</div>
+      <div class="small" style="margin-top:10px">Topic ${q.id} / 19</div>
+    `;
+    quiz.appendChild(card);
+  });
+  updateStats();
+}
+
+function selectedValue(qid){
+  const el = document.querySelector(`input[name="q_${qid}"]:checked`);
+  return el ? Number(el.value) : null;
+}
+
+function clearMarking(qid){
+  document.querySelectorAll(`[data-id="${qid}"] .opt`).forEach(el=>el.classList.remove('correct','wrong'));
+}
+
+function checkOne(qid){
+  const q = questions.find(x=>x.id===qid);
+  const sel = selectedValue(qid);
+  const res = document.getElementById(`result_${qid}`);
+  clearMarking(qid);
+  if(sel===null){
+    res.className = 'result bad';
+    res.innerHTML = 'Choose one option first.';
+    updateStats();
+    return;
+  }
+  const labels = document.querySelectorAll(`[data-id="${qid}"] .opt`);
+  labels[q.correct].classList.add('correct');
+  if(sel!==q.correct) labels[sel].classList.add('wrong');
+  if(sel===q.correct){
+    res.className = 'result good';
+    res.innerHTML = '<strong>Correct.</strong> Good exam-style distinction.';
+  } else {
+    res.className = 'result bad';
+    res.innerHTML = `<strong>Incorrect.</strong> Correct answer: ${String.fromCharCode(65+q.correct)}.`;
+  }
+  updateStats();
+}
+
+function toggleAnswer(qid){
+  document.getElementById(`answer_${qid}`).classList.toggle('show');
+}
+
+function checkAll(){ questions.forEach(q=>{ if(selectedValue(q.id)!==null) checkOne(q.id); }); }
+function revealAll(){ questions.forEach(q=>document.getElementById(`answer_${q.id}`).classList.add('show')); }
+
+function resetQuiz(){
+  document.querySelectorAll('input[type="radio"]').forEach(el=>el.checked=false);
+  document.querySelectorAll('.result').forEach(el=>{el.className='result'; el.innerHTML='';});
+  document.querySelectorAll('.answer').forEach(el=>el.classList.remove('show'));
+  document.querySelectorAll('.opt').forEach(el=>el.classList.remove('correct','wrong'));
+  updateStats();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateStats(){
+  const answered = questions.filter(q=>selectedValue(q.id)!==null).length;
+  const correct = questions.filter(q=>selectedValue(q.id)===q.correct).length;
+  document.getElementById('answered').textContent = answered;
+  document.getElementById('correct').textContent = correct;
+  document.getElementById('accuracy').textContent = answered ? Math.round(correct/answered*100)+'%' : '0%';
+  document.getElementById('remaining').textContent = questions.length - answered;
+}
+
+function shuffleQuestions(){
+  for(let i=questions.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [questions[i],questions[j]]=[questions[j],questions[i]];
+  }
+  render(questions);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+render(questions);
+</script>
+</body>
+</html>
